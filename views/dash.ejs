@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/enterpriseauth.css">
+    <title>Dashboard | EnterpriseAuth</title>
+</head>
+<body>
+    <div class="centered-container">
+        <div style="text-align: left;">
+            <h1>Dashboard</h1>
+            <p>View everything in one place.</p>
+            <h2>Users</h2>
+            <button onclick="newuser();">New user</button>
+            <br>
+            <br>
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>UID</th>
+                    <th>Admin</th>
+                    <th>HWID</th>
+                    <td>Delete</td>
+                </tr>
+                <tr>
+                    <td>longusernamelongstorybutpapasmurftellmeit</td>
+                    <td>-1</td>
+                    <td>True</td>
+                    <td class="unset">Unset</td>
+                    <td><button onclick="deleteuser('-1')">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>$</td>
+                    <td>-1</td>
+                    <td>True</td>
+                    <td class="set">Set</td>
+                    <td><button onclick="deleteuser('-1')">Delete</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+      function deleteuser(id) {
+        const confirm1 = confirm("Are you ABSOLUTELY CERTAIN that you want to delete this user?")
+        if(confirm1 == false) return;
+      }
+    </script>
+</body>
+</html>

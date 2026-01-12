@@ -1,0 +1,98 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    color: inherit;
+}
+
+body {
+    background-color: white;
+    color: black;
+    height: 100vh;
+    width: 100vw;
+    padding: 1rem !important;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Open Sans",
+        "Helvetica Neue",
+        sans-serif;
+}
+
+.flex-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: fit-content;
+}
+
+.centered-container {
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #e3e3e3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    height: fit-content;
+    margin: 0 auto;
+}
+
+input,
+button {
+    border-radius: 0.25rem;
+    border: 1px solid #c5c5c5;
+    background-color: inherit;
+    padding: 0.5rem 1rem;
+    outline: none;
+    font-family: inherit;
+    transform: translateY(0.15rem);
+    transition: all 0.5s;
+}
+
+input:focus,
+input:hover,
+button:hover {
+    transform: translateY(0rem);
+    box-shadow: 10px gray;
+}
+
+button {
+    cursor: pointer;
+}
+
+table tr:nth-child(even) {
+    background-color: #dedede;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #c5c5c5;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+th,
+td {
+    padding: 0.75rem 1rem;
+}
+
+.set,
+.unset {
+    font-weight: bold;
+}
+
+.set {
+    color: lime;
+}
+.unset {
+    color: red;
+}

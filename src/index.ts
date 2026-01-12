@@ -10,6 +10,17 @@ app.use((req, res, next) => {
   res.header("X-Powered-By", "EnterpriseAuth"); // ;)
   next();
 });
+app.use(express.static("static"));
+app.set("view engine", "ejs");
+
+app.get("/", (req, res) => {
+  // TODO: if already signed in, redirect to /dash
+  return res.render("signin");
+});
+
+app.get("/dash", (req, res) => {
+  return res.render("dash");
+});
 
 app.listen(port, () => {
   console.log(`listening on http://0.0.0.0:${port}`);

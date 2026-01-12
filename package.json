@@ -5,6 +5,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.6",
     "cookie-parser": "^1.4.7",
+    "ejs": "^3.1.10",
     "express": "^5.2.1"
   }
 }
