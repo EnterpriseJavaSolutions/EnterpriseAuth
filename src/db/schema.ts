@@ -5,5 +5,5 @@ export const usersTable = pgTable("users", {
   username: text().notNull().unique(),
   admin: boolean().notNull().default(false),
   hwid: text(), // Not required
-  password: text(),
+  password: text().notNull(),
 });
