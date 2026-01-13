@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import db from "./db/db";
 import { usersTable } from "./db/schema";
@@ -18,6 +18,34 @@ app.use((req, res, next) => {
 app.use(express.static("static"));
 app.use(express.json());
 app.set("view engine", "ejs");
+
+async function checkAdmin(req: Request, res: Response, next: NextFunction) {
+  const token = req.cookies.enterprise_auth;
+
+  if (!token) {
+    return res.redirect("/");
+  }
+
+  try {
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET!) as {
+      id: number;
+    };
+    const users = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, decoded.id));
+    const user = users[0];
+    if (!user) {
+      return res.redirect("/unauthorized.html");
+    }
+    if (!user.admin) {
+      return res.redirect("/unauthorized.html");
+    }
+    next();
+  } catch (err) {
+    return res.redirect("/unauthorized.html");
+  }
+}
 
 app.get("/", (req, res) => {
   // TODO: if already signed in, redirect to /dash
@@ -56,6 +84,8 @@ app.post("/api/signin", async (req, res) => {
     .status(200)
     .json({ status: 200, message: "Signed in!", extra: { token } });
 });
+
+app.post("/api/newuser", checkAdmin, (req, res) => {});
 
 app.get("/dash", async (req, res) => {
   if (!req.cookies.enterprise_auth) {
