@@ -120,3 +120,16 @@ tr:last-child td:last-child {
 tr:nth-child(even) {
     background-color: #f2f2f2; /* optional stripe */
 }
+
+.set {
+    color: lightgreen;
+}
+
+.unset {
+    color: red;
+}
+
+.set,
+.unset {
+    font-weight: bold;
+}

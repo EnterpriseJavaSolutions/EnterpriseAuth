@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/enterpriseauth.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/tiny-cookie"></script>
     <title>Sign In | EnterpriseAuth</title>
 </head>
 <body>
@@ -12,11 +14,28 @@
             <h1>Sign in</h1>
             <p>Sign in to use Enterprise Auth.</p>
             <form id="sign-in" class="flex-form">
-                <input type="text" placeholder="Username">
-                <input type="password" placeholder="Password">
+                <input type="text" placeholder="Username" id="username" autocomplete="none">
+                <input type="password" placeholder="Password" id="password">
                 <button type="submit">Sign in</button>
             </form>
         </div>
     </div>
+    <script type="module">
+      const form = document.getElementById("sign-in");
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const { data } = await axios.post("/api/signin", {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+          });
+          set("enterprise_auth", data.extra.token);
+          window.location.assign("/dash")
+        } catch(err) {
+          alert(err.response.data.message)
+        }
+      }
+    </script>
 </body>
 </html>

@@ -24,20 +24,19 @@
                         <th>HWID</th>
                         <td>Delete</td>
                     </tr>
-                    <tr>
-                        <td>longusernamelongstorybutpapasmurftellmeit</td>
-                        <td>-1</td>
-                        <td>True</td>
-                        <td class="unset">Unset</td>
-                        <td><button onclick="deleteuser('-1')">Delete</button></td>
-                    </tr>
-                    <tr>
-                        <td>$</td>
-                        <td>-1</td>
-                        <td>True</td>
-                        <td class="set">Set</td>
-                        <td><button onclick="deleteuser('-1')">Delete</button></td>
-                    </tr>
+                    <% users.forEach((user) => { %>
+                        <tr>
+                            <td><%= user.username %></td>
+                            <td><%= user.id %></td>
+                            <td><%= user.admin %></td>
+                            <% if(user.hwid) { %>
+                                <td class="set">Set</td>
+                            <% } else { %>
+                                <td class="unset">Unset</td>
+                            <% } %>
+                            <td><button onclick="deleteuser('<%= user.id %>')">Delete</button></td>
+                        </tr>
+                    <% }); %>
                 </table>
             </div>
         </div>
