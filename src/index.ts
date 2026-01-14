@@ -2,9 +2,10 @@ import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import db from "./db/db";
 import { usersTable } from "./db/schema";
-import { count, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import argon2 from "argon2";
 import jsonwebtoken from "jsonwebtoken";
+import * as path from "path";
 
 const app = express();
 const port = process.env.PORT || 3000; // bun auto handles .env
@@ -15,7 +16,7 @@ app.use((req, res, next) => {
   res.header("X-Powered-By", "EnterpriseAuth"); // ;)
   next();
 });
-app.use(express.static("static"));
+app.use(express.static(path.join(import.meta.dirname, "../static")));
 app.use(express.json());
 app.set("view engine", "ejs");
 
