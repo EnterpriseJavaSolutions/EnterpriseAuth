@@ -85,7 +85,121 @@ app.post("/api/signin", async (req, res) => {
     .json({ status: 200, message: "Signed in!", extra: { token } });
 });
 
-app.post("/api/newuser", checkAdmin, (req, res) => {});
+app.post("/api/newuser", checkAdmin, async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({
+      status: 400,
+      message: "You must provide both username and password!",
+      extra: {},
+    });
+  }
+
+  const existingUsers = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username));
+  const existingUser = existingUsers[0];
+
+  if (existingUser) {
+    return res.status(409).json({
+      status: 409,
+      message: "That username is taken!",
+      extra: {},
+    });
+  }
+
+  try {
+    const hashedPassword = await argon2.hash(password);
+    const user = await db.insert(usersTable).values({
+      username,
+      password: hashedPassword,
+    });
+
+    return res
+      .status(200)
+      .json({ status: 200, message: "Success!", extra: {} });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ status: 500, message: "Internal server error!", extra: {} });
+  }
+});
+
+app.post("/api/change-perms", checkAdmin, async (req, res) => {
+  const { admin, username } = req.body;
+  if (!admin || !username) {
+    return res.status(400).json({
+      status: 400,
+      message: "You must provide everything!",
+      extra: {},
+    });
+  }
+
+  const users = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username));
+  const user = users[0];
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: 404, message: "User not found.", extra: {} });
+  }
+
+  try {
+    await db
+      .update(usersTable)
+      .set({ admin: admin })
+      .where(eq(usersTable.username, username));
+    return res
+      .status(200)
+      .json({ status: 200, message: "Success!", extra: {} });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ status: 500, message: "Internal server error.", extra: {} });
+  }
+});
+
+app.post("/api/reset-hwid", checkAdmin, async (req, res) => {
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({
+      status: 400,
+      message: "You must provide username!",
+      extra: {},
+    });
+  }
+
+  const users = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username));
+  const user = users[0];
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: 404, message: "User not found.", extra: {} });
+  }
+
+  try {
+    await db
+      .update(usersTable)
+      .set({ hwid: null })
+      .where(eq(usersTable.username, username));
+    return res
+      .status(200)
+      .json({ status: 200, message: "Reset HWID.", extra: {} });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ status: 500, message: "Internal server error.", extra: {} });
+  }
+});
 
 app.get("/dash", async (req, res) => {
   if (!req.cookies.enterprise_auth) {

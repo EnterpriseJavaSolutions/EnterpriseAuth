@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/enterpriseauth.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Dashboard | EnterpriseAuth</title>
 </head>
 <body>
@@ -28,9 +29,22 @@
                         <tr>
                             <td><%= user.username %></td>
                             <td><%= user.id %></td>
-                            <td><%= user.admin %></td>
+                            <td>
+                                <input
+                                    type="checkbox"
+                                    data-username="<%= user.username %>"
+                                    <% if (user.admin) { %>
+                                        checked
+                                    <% } %>
+                                >
+                            </td>
                             <% if(user.hwid) { %>
-                                <td class="set">Set</td>
+                                <td>
+                                    <span class="set">Set</span>
+                                    <button style="transform: none !important;" onclick="resetHWID('<%= user.username %>')">
+                                        Reset
+                                    </button>
+                                </td>
                             <% } else { %>
                                 <td class="unset">Unset</td>
                             <% } %>
@@ -47,6 +61,50 @@
         if(confirm1 == false) return;
         // TODO: actually delete the user
         location.reload();
+      }
+
+      async function newuser() {
+        const username = prompt("What should their username be?");
+        const password = prompt("What should their password be?")
+
+        try {
+          const { data } = await axios.post("/api/newuser", {
+            username,
+            password
+          });
+          location.reload();
+        } catch(err) {
+          alert(`Error: ${err.response.data.message}`)
+        }
+      }
+
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+      checkboxes.forEach((checkbox) => {
+        checkbox.onchange = async (e) => {
+          const username = e.target.getAttribute("data-username");
+          const isAdmin = e.target.checked;
+          try {
+            const { data } = await axios.post("/api/change-perms", {
+              username,
+              admin: isAdmin
+            });
+            location.reload();
+          } catch(err) {
+            alert(`Error: ${err.response.data.message}`)
+          }
+        };
+      });
+
+      async function resetHWID(username) {
+        try {
+          const { data } = await axios.post("/api/reset-hwid", {
+            username
+          });
+          location.reload();
+        } catch(err) {
+          alert(`Error: ${err.response.data.message}`)
+        }
       }
     </script>
 </body>

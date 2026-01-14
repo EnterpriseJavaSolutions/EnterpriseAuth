@@ -69,11 +69,38 @@ button {
 }
 
 input:hover,
-input:focus,
+input:not([type="checkbox"]):focus,
 button:hover,
 button:focus {
     border-color: lightskyblue;
     transform: translateY(0rem);
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    width: 2rem;
+    height: 0.3rem;
+    cursor: pointer;
+    transition: 0.4s all;
+}
+
+input[type="checkbox"]:checked {
+    background-color: lightskyblue;
+}
+
+input[type="checkbox"]::before {
+    content: " ";
+    width: 0.8rem;
+    aspect-ratio: 1;
+    position: absolute;
+    background-color: black;
+    transform: translateY(-0.4rem) translateX(-0.9rem);
+    border-radius: 999px;
+    transition: 0.4s all;
+}
+
+input[type="checkbox"]:checked::before {
+    transform: translateY(-0.4rem) translateX(0.1rem);
 }
 
 button {
