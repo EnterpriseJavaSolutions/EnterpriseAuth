@@ -53,7 +53,9 @@ async function checkAdmin(req: Request, res: Response, next: NextFunction) {
 }
 
 app.get("/", (req, res) => {
-  // TODO: if already signed in, redirect to /dash
+  if (req.cookies.enterprise_auth) {
+    return res.redirect("/dash");
+  }
   return res.render("signin");
 });
 
@@ -199,6 +201,40 @@ app.post("/api/reset-hwid", checkAdmin, async (req, res) => {
     return res
       .status(200)
       .json({ status: 200, message: "Reset HWID.", extra: {} });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ status: 500, message: "Internal server error.", extra: {} });
+  }
+});
+
+app.post("/api/delete-user", checkAdmin, async (req, res) => {
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({
+      status: 400,
+      message: "You must provide username!",
+      extra: {},
+    });
+  }
+
+  const users = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username));
+  const user = users[0];
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: 404, message: "User not found.", extra: {} });
+  }
+
+  try {
+    await db.delete(usersTable).where(eq(usersTable.username, username));
+    return res
+      .status(200)
+      .json({ status: 200, message: "Deleted the user.", extra: {} });
   } catch (err) {
     return res
       .status(500)

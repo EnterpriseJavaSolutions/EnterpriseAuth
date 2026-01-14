@@ -48,7 +48,7 @@
                             <% } else { %>
                                 <td class="unset">Unset</td>
                             <% } %>
-                            <td><button onclick="deleteuser('<%= user.id %>')">Delete</button></td>
+                            <td><button onclick="deleteuser('<%= user.username %>')">Delete</button></td>
                         </tr>
                     <% }); %>
                 </table>
@@ -56,10 +56,17 @@
         </div>
     </div>
     <script>
-      function deleteuser(id) {
+      async function deleteuser(username) {
         const confirm1 = confirm("Are you ABSOLUTELY CERTAIN that you want to delete this user?")
         if(confirm1 == false) return;
-        // TODO: actually delete the user
+        try {
+          const { data } = await axios.post("/api/delete-user", {
+            username
+          });
+          location.reload();
+        } catch(err) {
+          alert(`Error: ${err.response.data.message}`)
+        }
         location.reload();
       }
 
