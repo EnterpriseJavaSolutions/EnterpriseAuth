@@ -6,9 +6,13 @@ import { eq } from "drizzle-orm";
 import argon2 from "argon2";
 import jsonwebtoken from "jsonwebtoken";
 import * as path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const port = process.env.PORT || 3000; // bun auto handles .env
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // express config
 app.use(cookieParser());
@@ -16,7 +20,7 @@ app.use((req, res, next) => {
   res.header("X-Powered-By", "EnterpriseAuth"); // ;)
   next();
 });
-app.use(express.static(path.join(import.meta.dirname, "../static")));
+app.use(express.static(path.join(__dirname, "../static")));
 app.use(express.json());
 app.set("view engine", "ejs");
 
