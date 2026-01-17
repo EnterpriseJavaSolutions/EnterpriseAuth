@@ -113,6 +113,7 @@ app.get("/api/whoami", async (req, res) => {
         id: user.id,
         username: user.username,
         hwidSet: !!user.hwid,
+        hwid: user.hwid,
       },
     });
   } catch (err) {
