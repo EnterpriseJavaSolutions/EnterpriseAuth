@@ -153,7 +153,7 @@ app.post("/api/hwid", async (req, res) => {
 
     await db
       .update(usersTable)
-      .set({ hwid: null })
+      .set({ hwid: hwid })
       .where(eq(usersTable.id, user.id));
 
     return res
