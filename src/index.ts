@@ -122,6 +122,49 @@ app.get("/api/whoami", async (req, res) => {
   }
 });
 
+app.post("/api/hwid", async (req, res) => {
+  const { hwid } = req.body;
+
+  if (!hwid) {
+    return res
+      .status(400)
+      .json({ status: 400, message: "HWID not provided.", extra: {} });
+  }
+
+  const token = req.headers["authorization"];
+
+  try {
+    // @ts-ignore
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET!) as {
+      id: number;
+    };
+    const users = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, decoded.id));
+    const user = users[0];
+
+    if (!!user.hwid) {
+      return res
+        .status(409)
+        .json({ status: 409, message: "HWID already set.", extra: {} });
+    }
+
+    await db
+      .update(usersTable)
+      .set({ hwid: null })
+      .where(eq(usersTable.id, user.id));
+
+    return res
+      .status(200)
+      .json({ status: 200, message: "Success!", extra: {} });
+  } catch (err) {
+    return res
+      .status(401)
+      .json({ status: 401, message: "Invalid token.", extra: {} });
+  }
+});
+
 app.post("/api/newuser", checkAdmin, async (req, res) => {
   const { username, password } = req.body;
 
