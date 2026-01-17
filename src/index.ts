@@ -92,6 +92,36 @@ app.post("/api/signin", async (req, res) => {
     .json({ status: 200, message: "Signed in!", extra: { token } });
 });
 
+app.get("/api/whoami", async (req, res) => {
+  const token = req.headers["authorization"];
+
+  try {
+    // @ts-ignore
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET!) as {
+      id: number;
+    };
+    const users = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, decoded.id));
+    const user = users[0];
+
+    return res.status(200).json({
+      status: 200,
+      message: "Success",
+      extra: {
+        id: user.id,
+        username: user.username,
+        hwidSet: !!user.hwid,
+      },
+    });
+  } catch (err) {
+    return res
+      .status(401)
+      .json({ status: 401, message: "Invalid token.", extra: {} });
+  }
+});
+
 app.post("/api/newuser", checkAdmin, async (req, res) => {
   const { username, password } = req.body;
 
